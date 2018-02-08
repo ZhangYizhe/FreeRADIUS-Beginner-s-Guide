@@ -7,7 +7,6 @@
 # 目录
 #### 储备知识
 * [AAA(Authentication, Authorization和Accounting)](https://github.com/ZhangYizhe/FreeRADIUS-Beginner-s-Guide/blob/master/content/AAA(Authentication%2C%20Authorization%E5%92%8CAccounting).md)
-* [AAA与RADIUS基础总结]()
 * [Alice、Bob和Isaac]()
 * [NAS（网络接入服务器）]()
 * [byte（字节）]()
@@ -15,7 +14,7 @@
 * [RADIUS扩展]()
 * [RADIUS数据包]()
 * [关于FreeRADIUS]()
-
+* [AAA与RADIUS基础总结]()
 #### 安装
 
 * [安装FreeRADIUS]()
