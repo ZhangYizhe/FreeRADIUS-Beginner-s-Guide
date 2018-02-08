@@ -18,7 +18,7 @@
 
 #### 安装
 
-* [安装FreeRADIUS]()
+* [安装FreeRADIUS](https://github.com/ZhangYizhe/FreeRADIUS-Beginner-s-Guide/blob/master/content/%E5%AE%89%E8%A3%85FreeRADIUS.md)
 
 #### Authentication
 * [Authentication（认证）（待建完）]()
