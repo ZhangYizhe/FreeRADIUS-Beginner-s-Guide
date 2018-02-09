@@ -21,12 +21,12 @@
 * [安装FreeRADIUS](https://github.com/ZhangYizhe/FreeRADIUS-Beginner-s-Guide/blob/master/content/%E5%AE%89%E8%A3%85FreeRADIUS.md)
 
 #### Authentication
-* [Authentication（认证）（待建完）]()
+* [Authentication（认证）（待建完）](https://github.com/ZhangYizhe/FreeRADIUS-Beginner-s-Guide/blob/master/content/Authentication-认证-待建完.md)
 
 #### 用户名和密码的来源
-* [（用户名和密码的来源）Sources of Usernames and Passwords]()
+* [（用户名和密码的来源）Sources of Usernames and Passwords](#)
 
 #### Accounting（核算）
 
-* [Accounting（核算）]()
+* [Accounting（核算）](#)
 
