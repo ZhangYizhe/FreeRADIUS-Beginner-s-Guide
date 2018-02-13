@@ -252,4 +252,19 @@ Stop请求通常表示终止原因：
 
 > 有时会有一个AVP叫做Acct-Delay-Time。这个AVP的值可以被RADIUS服务器使用，用来在会话调整起始和停止时间时记录详细信息。当NAS很难将Accounting-Request发送到RADIUS服务器，它必须重新发送请求时，通常会出现这种情况。如果Acct-Delay-Time的值很大，你应该调查一下为什么会这样。
 
+### FreeRADIUS: pre-accounting section
+
+当FreeRADIUS收到Accounting-Request时，它首先被传递到preacct部分。这个部分被定义在虚拟服务器的文件中。与大多数FreeRADIUS配置一样，默认情况下可以正常工作，但是如果您想要为用户操作AVP值，那么就可以这样做。preacct部分中的注释表明在本节中可以做什么。
+
+一个有趣的模块是preprocess模块(rlm_preprocess)。当需要时，这个模块将返回请求的完整性。在我们的示例中，它添加了NAS-IP-Address AVP，因为它缺失了。这个AVP是按RFC 2866要求Accounting-Request。
+
+NAS-IP-Address或者NAS-Identifier必须要存在于一个RADIUSAccounting-Request中。
+
+acct_unique条目通过Acct-Unique-Session-ID的值来确保每个请求都有一个全新的标识符。
+
+### Realms
+
+当您将核算请求转发到另一个RADIUS服务器时，preacct部分也非常重要。suffix模块(realm模块的实例)用于标识和触发此类通信的路由。还有IPASS和ntdomain，但是注释掉了。这两个都是realm模块的实例。suffix、IPASS和ntdomain都希望在User-Name AVP中寻找一个独特的模式来确定请求的范围。在第12章，漫游和代理中，将对其他RADIUS服务器的传输进行深入的讨论。
+
+### 设置Acct-Type
 
