@@ -268,3 +268,14 @@ acct_unique条目通过Acct-Unique-Session-ID的值来确保每个请求都有�
 
 ### 设置Acct-Type
 
+您也可以使用preacct部分中的files模块。将使用此模块设置Acct-Type内部AVP。Acct-Type AVP用于通过强制模块的不同实例来处理accounting部分内的帐户流量，从而分离帐户流量。这与Acct-Type内部AVP可以在authorize部分中设置以便在authenticate部分中指定要使用的身份验证方法的原理相同。您可以在以下URL上阅读有关使用此功能的详细信息:
+
+> http://freeradius.org/radiusd/doc/Acct-Type
+> （已失效）
+
+### FreeRADIUS: accounting section
+
+Accounting-Request由preacct部分处理后，将传递到accounting部分。这也在虚拟服务器的文件中定义。这是我们激活sradutmp模块的部分。accounting部分负责实际记录会计数据。有多种方法可以做到这一点。默认情况下，它将使用详细信息模块记录为文本文件。但是，我们也可以指定它应该使用SQL模块记录到SQL数据库中。此部分还可用于记录用户的使用情况(每日模块)。然后可以使用该用法来确定授权结果。
+
+我们鼓励您阅读会计部分中的注释，以了解包含的模块的功能。
+
