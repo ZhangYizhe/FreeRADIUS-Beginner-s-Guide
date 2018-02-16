@@ -275,7 +275,11 @@ acct_unique条目通过Acct-Unique-Session-ID的值来确保每个请求都有�
 
 ### FreeRADIUS: accounting section
 
-Accounting-Request由preacct部分处理后，将传递到accounting部分。这也在虚拟服务器的文件中定义。这是我们激活sradutmp模块的部分。accounting部分负责实际记录会计数据。有多种方法可以做到这一点。默认情况下，它将使用详细信息模块记录为文本文件。但是，我们也可以指定它应该使用SQL模块记录到SQL数据库中。此部分还可用于记录用户的使用情况(每日模块)。然后可以使用该用法来确定授权结果。
+Accounting-Request由preacct部分处理后，将传递到accounting部分。这也在虚拟服务器的文件中定义。这是我们激活sradutmp模块的部分。accounting部分负责实际记录核算数据。有多种方法可以做到这一点。默认情况下，它将使用详细信息模块记录为文本文件。但是，我们也可以指定它应该使用SQL模块记录到SQL数据库中。此部分还可用于记录用户的使用情况(daily模块)。然后可以使用该用法来确定授权结果。
 
 我们鼓励您阅读会计部分中的注释，以了解包含的模块的功能。
+
+### 最小化独立（orphan）会话
+
+当NAS挂起时，它无法向RADIUS服务器发送任何请求。重新启动NAS后，应发送Acct-Status-Type = Accounting-On。正常关闭时，应发送Acct-Status-Type = Accounting-Off.。这使核算记录更加健全和可靠。radzap命令模拟NAS的正常关闭，用于关闭orphan会话。
 
