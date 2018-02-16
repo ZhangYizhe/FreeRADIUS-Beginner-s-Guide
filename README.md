@@ -23,12 +23,12 @@
 > 了解一个RADIUS数据包的格式将会大大帮助理解RADIUS协议. 让我们更细致的查看RADIUS数据包. 我们将会看一个简单的authentication请求. 一个客户端发送一个Access-Request包到服务器. 服务器返回一个Access-Accept包来表示成功.
 
 * [RADIUS数据包](https://github.com/ZhangYizhe/FreeRADIUS-Beginner-s-Guide/blob/master/content/RADIUS数据包.md)
-* [Code]()
-* [Identifier（鉴定）]()
-* [Length]()
-* [Authenticator（认证）]()
-* [Attributes（属性）]()
-* [AVPs]()
+* [Code](https://github.com/ZhangYizhe/FreeRADIUS-Beginner-s-Guide/blob/master/content/RADIUS%E6%95%B0%E6%8D%AE%E5%8C%85.md#code)
+* [Identifier（鉴定）](https://github.com/ZhangYizhe/FreeRADIUS-Beginner-s-Guide/blob/master/content/RADIUS%E6%95%B0%E6%8D%AE%E5%8C%85.md#identifier%E9%89%B4%E5%AE%9A)
+* [Length](https://github.com/ZhangYizhe/FreeRADIUS-Beginner-s-Guide/blob/master/content/RADIUS%E6%95%B0%E6%8D%AE%E5%8C%85.md#length)
+* [Authenticator（认证）](https://github.com/ZhangYizhe/FreeRADIUS-Beginner-s-Guide/blob/master/content/RADIUS%E6%95%B0%E6%8D%AE%E5%8C%85.md#authenticator%E8%AE%A4%E8%AF%81)
+* [Attributes（属性）](https://github.com/ZhangYizhe/FreeRADIUS-Beginner-s-Guide/blob/master/content/RADIUS%E6%95%B0%E6%8D%AE%E5%8C%85.md#attributes%E5%B1%9E%E6%80%A7)
+* [AVPs](https://github.com/ZhangYizhe/FreeRADIUS-Beginner-s-Guide/blob/master/content/RADIUS%E6%95%B0%E6%8D%AE%E5%8C%85.md#avps)
 
 #### AVP格式
 * [Type](https://github.com/ZhangYizhe/FreeRADIUS-Beginner-s-Guide/blob/master/content/RADIUS数据包.md#type)
