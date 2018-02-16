@@ -11,6 +11,7 @@
 * [NAS（网络接入服务器）](https://github.com/ZhangYizhe/FreeRADIUS-Beginner-s-Guide/blob/master/content/NAS（网络接入服务器）.md)
 * [byte（字节）](https://github.com/ZhangYizhe/FreeRADIUS-Beginner-s-Guide/blob/master/content/byte（字节）.md)
 
+-------
 ### Radius
 
 * [RADIUS](https://github.com/ZhangYizhe/FreeRADIUS-Beginner-s-Guide/blob/master/content/RADIUS.md)
@@ -33,11 +34,14 @@
 * [RADIUS服务器端](https://github.com/ZhangYizhe/FreeRADIUS-Beginner-s-Guide/blob/master/content/RADIUS数据包.md#radius服务器端)
 * [RADIUS客户端](https://github.com/ZhangYizhe/FreeRADIUS-Beginner-s-Guide/blob/master/content/RADIUS数据包.md#radius客户端)
 
+-------
 ### RADIUS其它
 * [RADIUS扩展](https://github.com/ZhangYizhe/FreeRADIUS-Beginner-s-Guide/blob/master/content/RADIUS扩展.md)
 * [关于FreeRADIUS](https://github.com/ZhangYizhe/FreeRADIUS-Beginner-s-Guide/blob/master/content/关于FreeRADIUS.md)
 * [AAA与RADIUS基础总结](https://github.com/ZhangYizhe/FreeRADIUS-Beginner-s-Guide/blob/master/content/AAA与RADIUS基础总结.md)
 
+
+-------
 ### 安装FreeRADIUS
 
 * [安装FreeRADIUS](https://github.com/ZhangYizhe/FreeRADIUS-Beginner-s-Guide/blob/master/content/%E5%AE%89%E8%A3%85FreeRADIUS.md)
@@ -49,9 +53,11 @@
 * [注意防火墙](https://github.com/ZhangYizhe/FreeRADIUS-Beginner-s-Guide/blob/master/content/安装FreeRADIUS.md#注意防火墙)
 * [使用源码进行安装](https://github.com/ZhangYizhe/FreeRADIUS-Beginner-s-Guide/blob/master/content/安装FreeRADIUS.md#使用源码进行安装)
 
+-------
 ### Authentication
 * [Authentication（认证）（待建完）](https://github.com/ZhangYizhe/FreeRADIUS-Beginner-s-Guide/blob/master/content/Authentication-认证-待建完.md)
 
+-------
 ### 用户名和密码的来源
 * [（用户名和密码的来源）Sources of Usernames and Passwords](https://github.com/ZhangYizhe/FreeRADIUS-Beginner-s-Guide/blob/master/content/用户名和密码的来源（Sources%20of%20Usernames%20and%20Passwords）.md)
 * [用户存储](https://github.com/ZhangYizhe/FreeRADIUS-Beginner-s-Guide/blob/master/content/用户名和密码的来源（Sources%20of%20Usernames%20and%20Passwords）.md#用户存储)
@@ -74,6 +80,7 @@
 * [控制组的使用](https://github.com/ZhangYizhe/FreeRADIUS-Beginner-s-Guide/blob/master/content/用户名和密码的来源（Sources%20of%20Usernames%20and%20Passwords）.md#控制组的使用)
 * [Profiles](https://github.com/ZhangYizhe/FreeRADIUS-Beginner-s-Guide/blob/master/content/用户名和密码的来源（Sources%20of%20Usernames%20and%20Passwords）.md#profiles)
 
+-------
 ### Accounting（核算）
 
 * [Accounting（核算）](https://github.com/ZhangYizhe/FreeRADIUS-Beginner-s-Guide/blob/master/content/Accounting（核算）.md)
