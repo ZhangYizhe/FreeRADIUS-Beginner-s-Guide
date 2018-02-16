@@ -16,9 +16,16 @@
 * [关于FreeRADIUS](https://github.com/ZhangYizhe/FreeRADIUS-Beginner-s-Guide/blob/master/content/关于FreeRADIUS.md)
 * [AAA与RADIUS基础总结](https://github.com/ZhangYizhe/FreeRADIUS-Beginner-s-Guide/blob/master/content/AAA与RADIUS基础总结.md)
 
-#### 安装
+#### 安装FreeRADIUS
 
 * [安装FreeRADIUS](https://github.com/ZhangYizhe/FreeRADIUS-Beginner-s-Guide/blob/master/content/%E5%AE%89%E8%A3%85FreeRADIUS.md)
+* [预构建二进制](https://github.com/ZhangYizhe/FreeRADIUS-Beginner-s-Guide/blob/master/content/安装FreeRADIUS.md#预构建二进制)
+* [安装FreeRADIUS](https://github.com/ZhangYizhe/FreeRADIUS-Beginner-s-Guide/blob/master/content/安装FreeRADIUS.md#采取行动的时间--安装freeradius)
+* [额外的包](https://github.com/ZhangYizhe/FreeRADIUS-Beginner-s-Guide/blob/master/content/安装FreeRADIUS.md#额外的包)
+* [可用的包](https://github.com/ZhangYizhe/FreeRADIUS-Beginner-s-Guide/blob/master/content/安装FreeRADIUS.md#可用的包)
+* [特殊注意事项](https://github.com/ZhangYizhe/FreeRADIUS-Beginner-s-Guide/blob/master/content/安装FreeRADIUS.md#特殊注意事项)
+* [注意防火墙](https://github.com/ZhangYizhe/FreeRADIUS-Beginner-s-Guide/blob/master/content/安装FreeRADIUS.md#注意防火墙)
+* [使用源码进行安装](https://github.com/ZhangYizhe/FreeRADIUS-Beginner-s-Guide/blob/master/content/安装FreeRADIUS.md#使用源码进行安装)
 
 #### Authentication
 * [Authentication（认证）（待建完）](https://github.com/ZhangYizhe/FreeRADIUS-Beginner-s-Guide/blob/master/content/Authentication-认证-待建完.md)
