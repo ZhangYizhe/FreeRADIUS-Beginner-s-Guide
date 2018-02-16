@@ -219,7 +219,7 @@ FreeRADIUS的核算独立于授权和身份验证。它使用一个单独的端�
 
 核算记录没有反映用户在会话期间访问过的网站的细节。它们只表示时间和数据的使用。
 
-### NAS:重要的AVPs
+### NAS:包括AVPs
 
 虽然通过NAS发送的AVPs各有不同,一些AVPs应该出现在Accounting-Request很重要。
 

@@ -77,4 +77,27 @@
 ### Accounting（核算）
 
 * [Accounting（核算）](https://github.com/ZhangYizhe/FreeRADIUS-Beginner-s-Guide/blob/master/content/Accounting（核算）.md)
+* [基础核算](https://github.com/ZhangYizhe/FreeRADIUS-Beginner-s-Guide/blob/master/content/Accounting（核算）.md#基础核算)
+
+#### 从NAS模拟核算
+* [模拟文件](https://github.com/ZhangYizhe/FreeRADIUS-Beginner-s-Guide/blob/master/content/Accounting（核算）.md#模拟文件)
+* [开始一个会话](https://github.com/ZhangYizhe/FreeRADIUS-Beginner-s-Guide/blob/master/content/Accounting（核算）.md#开始一个会话)
+* [结束一个会话](https://github.com/ZhangYizhe/FreeRADIUS-Beginner-s-Guide/blob/master/content/Accounting（核算）.md#结束一个会话)
+* [孤立会话](https://github.com/ZhangYizhe/FreeRADIUS-Beginner-s-Guide/blob/master/content/Accounting（核算）.md#孤立会话)
+* [独立核算](https://github.com/ZhangYizhe/FreeRADIUS-Beginner-s-Guide/blob/master/content/Accounting（核算）.md#独立核算)
+
+#### NAS:重要的AVPs
+* [Acct-Status-Type](https://github.com/ZhangYizhe/FreeRADIUS-Beginner-s-Guide/blob/master/content/Accounting（核算）.md#acct-status-type)
+* [Acct-Session-Id](https://github.com/ZhangYizhe/FreeRADIUS-Beginner-s-Guide/blob/master/content/Accounting（核算）.md#acct-session-id)
+* [AVPs indicating usage](https://github.com/ZhangYizhe/FreeRADIUS-Beginner-s-Guide/blob/master/content/Accounting（核算）.md#avps-indicating-usage)
+* [NAS: included AVPs](https://github.com/ZhangYizhe/FreeRADIUS-Beginner-s-Guide/blob/master/content/Accounting（核算）.md#nas-included-avps)
+
+#### FreeRADIUS: pre-accounting section
+* [FreeRADIUS: pre-accounting section](https://github.com/ZhangYizhe/FreeRADIUS-Beginner-s-Guide/blob/master/content/Accounting（核算）.md#freeradius-pre-accounting-section)
+* [Realms](https://github.com/ZhangYizhe/FreeRADIUS-Beginner-s-Guide/blob/master/content/Accounting（核算）.md#realms)
+* [设置Acct-Type](https://github.com/ZhangYizhe/FreeRADIUS-Beginner-s-Guide/blob/master/content/Accounting（核算）.md#设置acct-type)
+
+#### FreeRADIUS: accounting section
+* [FreeRADIUS: accounting section](https://github.com/ZhangYizhe/FreeRADIUS-Beginner-s-Guide/blob/master/content/Accounting（核算）.md#freeradius-accounting-section)
+* [最小化独立（orphan）会话](https://github.com/ZhangYizhe/FreeRADIUS-Beginner-s-Guide/blob/master/content/Accounting（核算）.md#最小化独立orphan会话)
 
