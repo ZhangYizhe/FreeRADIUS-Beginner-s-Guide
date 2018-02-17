@@ -175,3 +175,154 @@ if(Framed-Protocol){reject}
 
 unlang还支持条件语句中的逻辑AND (`&&`)和逻辑OR (`||`)。在本练习中，我们将拒绝不在users文件中或请求中存在Framed-Protocol AVP的用户。
 
+1.编辑FreeRADIUS配置目录下的sites-available/default虚拟服务器，并在authorize（授权）部分的files条目下添加以下行:
+
+
+```
+if((noop)||(Framed-Protocol)){reject}
+```
+
+2.在调试模式下重新启动FreeRADIUS，并尝试以alice身份进行身份验证，同时在radtest命令的末尾添加1。这将包括请求中的Framed-Protocol AVP :
+
+`radtest alice passme 127.0.0.1 100 testing123 1`
+
+你将会得一个Acces-Reject packet
+
+3.尝试使用users文件中不存在的用户名和密码进行身份验证。您应该得到一个Access-Reject数据包。
+
+4.最后，尝试使用users文件中不存在的用户名和密码进行身份验证，并将1添加到radtest命令的末尾。您应该得到一个Access-Reject数据包。
+
+FreeRADIUS服务器的调试反馈将指示在请求期间如何评估if条件。
+
+### 属性和变量（Attributes and variables）
+
+> RADIUS中的授权在很大程度上取决于属性。我们可以在Access-Request中使用AVPs来验证它在授权期间是否满足我们的要求。我们还可以在Access-Reply中返回AVPs，以指示NAS用户仅被授权执行某些操作。
+
+> 由于RADIUS协议都是关于属性的，因此unlang大多使用属性作为变量。还有一些变量不是属性的例外情况。这也将在本节中介绍。
+
+#### 属性列表
+
+FreeRADIUS通过将属性存储在列表中来管理属性。列表类似于命名空间，它允许具有相同名称的属性独立存在于不同位置。Unlang可用于在以下不同列表中操作或添加属性:
+
+* 有一个request列表，其中包含请求中的所有AVPs，例如User-Name。
+* 有一个reply列表，其中包含最终将在回复中的所有AVPs，例如Reply-Message。
+* 我们还可以工作在前面章节中的control列表，其中我们将此列表中的属性称为内部属性，例如Auth-Type。
+* 要引用特定列表中的属性，我们使用列表名称和冒号，后跟属性名称，例如request:Framed-Protocol。
+* 如果列表的名称被省略，则它引用request列表。这就是为什么我们可以在前面的练习中不指定列表名称。
+* 以下属性列表可供使用:`request, reply, control, proxy-request, proxy-reply, outer.request, outer.reply, outer.control, outer.proxy-request,` and `outer.proxy-reply`。
+* 属性是通过使用update关键字添加或修改的。update关键字与必须修改的列表名称一起使用将创建一个更新部分，可以在其中修改或添加属性。
+
+在介绍了属性和属性列表之后，现在是在实际练习中使用它们的时候了。
+
+### 引用属性
+
+> 在本节中，我们将使用属性。
+
+#### `if`语句中的属性
+
+Unlang可以在虚拟服务器定义的各个部分中使用。以前我们在authorize（授权）部分使用过它。您不应按照FreeRADIUS作者的说明在authenticate（身份验证）部分中使用unlang。我们将在post-auth使用unlang来确定是否使用了Auth-Type = PAP，并在确实用于验证用户时给出反馈。
+
+1.编辑FreeRADIUS配置目录下的sites-available/default虚拟服务器，并在post-auth部分的顶部添加以下内容:
+
+
+```
+if(control:Auth-Type == 'PAP'){    update reply {        Reply-Message := "We are using %{control:Auth-Type} authentication"    }}
+```
+
+2.在调试模式下重新启动FreeRADIUS，并尝试验证为Alice。指定的回复消息应包含在回复中。
+
+#### 刚刚发生了什么
+
+我们已使用unlang测试control属性列表中的Auth-Type AVP的值。如果它等于PAP，我们修改了回复属性列表中的Reply-Message AVP。虽然if语句仅包含五行，但有重要的事情要讨论。我们将讨论以下问题:
+
+* 引用条件中属性的方法
+* 比较运算符
+* 在属性列表中更改和添加属性
+
+#### 引用条件中的属性
+
+引用属性时，我们在条件中使用了另一种语法。其内容如下:
+
+`if("%{control:Auth-Type}" == 'PAP'){`
+
+虽然两者都可以使用，但为了便于阅读，第一种是优选的。替代语法通常用在字符串中。然后将插入属性值以成为字符串的一部分。这称为字符串扩展。我们使用字符串扩展来创建Reply-Message的值。
+
+`Reply-Message := "We are using %{control:Auth-Type} authentication"`
+
+如果省略对属性列表(control:)的引用，则unlang将使用request:Auth-Type。如果此属性不在属性列表中，则unlang返回false。
+
+#### 比较运算符
+
+有相当多的比较运算符可用于条件测试。AVP的数据类型将确定哪些操作员可用。
+
+Operator | Data type | Sample
+---|---|---== | Strings and numbers |(control:Auth-Type == 'PAP')!= | |(reply:Idle-Timeout != 60)<  |Numbers |(reply:Idle-Timeout <= 60)
+<= | |\> | |\>= | |=~| 字符串转换为正则|`(request:User-Name =~ /^.*\.co\.za/i)`!~ |公式 |同上
+
+#### 属性操作
+
+Unlang可用于修改AVPs。要修改AVP的值，需要在Unlang中使用update关键字。update语句的概要如下:
+
+
+```
+update <list> {attribute <op> value...}
+```
+
+update语句只能包含属性。运算符的值非常重要，因为它将确定如何处理列表中具有该名称的现有属性。我们将在此讨论三个常用运算符。请注意，其他运算符确实存在。有关详细信息，请参阅unlang手册页。
+
+Operator | Description
+---|---=  | 将属性添加到列表中，前提是该列表中尚未存在同名的属性:= |将属性添加到列表中。如果该列表中已存在同名的任何属性，则其值将替换为当前属性的值.+= | 将属性添加到列表尾部，即使列表中已经存在同名的属性.
+
+请注意，指定给属性的值必须是正确的类型。当你把字符串值分配给应该采用整数值的属性时，将导致错误。
+
+#### 变量
+
+变量不能像在其他语言中那样在unlang中声明。unlang所有属性都是变量，但并非所有变量都是属性。属性在属性列表中作为变量引用之前，必须先将其添加到列表中。对变量的所有引用必须包含在双引号或反引号字符串中。引用此引用字符串中的变量的格式为%{\<variable>}。在上一节中，我们参考了Auth-Type变量，它是一个属性:
+
+`Reply-Message := "We are using %{control:Auth-Type} authentication"`
+
+在本节中，我们将参考不是属性的变量。
+
+#### 作为变量的SQL语句
+
+unlang的一个非常强大的功能是它允许您通过SQL模块执行SQL查询。查询实际上是一个变量，此查询的返回值是变量的值。我们现在将修改上一个练习，从数据库中获取时间，并将其添加到Reply-Message 值中。
+
+> 要执行SQL查询，您需要包括并配置FreeRADIUS以使用SQL模块。SQL模块还需要在至少一个部分中使用，例如，authorize(授权)部分或accounting（核算）部分。
+
+1.编辑FreeRADIUS配置目录下的sites-available/default虚拟服务器，并在post-auth部分的顶部添加以下内容:
+
+
+```
+if(control:Auth-Type == 'PAP'){    update reply {        Reply-Message := "We are using %{control:Auth-Type}authentication and the time in the database is now %{sql:SELECT curtime();}"    }}
+```
+
+2.在调试模式下重新启动FreeRADIUS，并尝试验证为alice.。指定的Reply-Message应包含在回复中，并应返回数据库中的时间。
+
+#### 刚刚发生了什么
+
+我们已使用SQL语句作为变量，并将此语句的结果作为此变量的值返回。
+
+以下是FreeRADIUS服务器的调试输出，指示如何执行SQL状态:
+
+
+```
+++? if (control:Auth-Type == 'PAP')? Evaluating (control:Auth-Type == 'PAP') -> TRUE++? if (control:Auth-Type == 'PAP') -> TRUE++- entering if (control:Auth-Type == 'PAP') {...}sql_xlat    expand: %{User-Name} -> alice
+sql_set_user escaped user --> 'alice'    expand: SELECT curtime(); -> SELECT curtime();rlm_sql (sql): Reserving sql socket id: 3sql_xlat finishedrlm_sql (sql): Released sql socket id: 3    expand: We are using %{control:Auth-Type} authentication and thetime in the database is now %{sql:SELECT curtime();} -> We are using PAPauthentication and the time in the database is now 17:48:54+++[reply] returns noop++- if (control:Auth-Type == 'PAP') returns noop
+```
+
+如您所见，SQL查询的处理方式与属性的处理方式大致相同。以下关于SQL语句作为变量的几点便于记忆:
+
+* SQL查询应返回单个值。此值是分配给SQL语句变量的值。
+* SQL查询可以引用查询本身内部的属性。如果要获取当前用户的总使用量，可以使用以下行:
+
+```
+"The total octets is: %{sql: SELECT IFNULL(SUM(AcctInputOctets + AcctOutputOctets),0) FROM radacct WHERE UserName='%{User-Name}';}"
+```
+
+* 带引号或带反引号的字符串可以包含SQL查询和属性的组合。这些将被扩展以返回结果。
+* 如果SQL模块未在FreeRADIUS中使用，则SQL查询扩展的结果将为空字符串，调试消息将显示错误:
+
+`WARNING: Unknown module "sql" in string expansion "%{sql:SELECTcurdate();}"`
+> 扩展字符串的长度最多可达8000个字符。这为相当复杂的SQL语句留下了足够的空间。
+
+
