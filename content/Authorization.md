@@ -675,4 +675,6 @@ ChilliSpot-Max-Total-Gigawords = 2ChilliSpot-Max-Total-Octets = 536866638Mikro
 
 随着本章关于授权的结束，我们现在已经完成了AAA框架的覆盖。本书的其余部分将集中讨论更高级的RADIUS主题，以及特定于自由RADIUS的主题。
 
+> 翻译于2018/2/19日完成
+
 
