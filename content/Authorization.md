@@ -445,7 +445,7 @@ if(request:Framed-Protocol =~ /.*PP$/i){update reply {Reply-Message := "Regexp
 
 我们从对unlang的介绍中已经看到，变量主要是通过属性来使用的。我们需要定义一些要在数据计数器中使用的属性。
 
-编辑FreeRADIUS配置目录下的字典文件，并添加以下属性定义:
+编辑FreeRADIUS配置目录下的dictionary文件，并添加以下属性定义:
 
 
 ```
@@ -484,6 +484,8 @@ Attribute | Meaning
 * 允许Perl将字符串值转换为用于计算的数值。这克服了32位限制。
 
 ### 使用 perl module
+-------
+
 
 FreeRADIUS允许对节（section.）进行可选命名。这使我们能够为perl模块定义各种命名部分。每个命名部分随后可以用作模块。定义如下:
 
@@ -509,4 +511,168 @@ perl check_usage {    module = ${confdir}/check_usage.pl}
 3.这两个Perl部分各自引用一个Perl脚本，该脚本将由perlmodule调用。确保这些Perl脚本位于FreeRADIUS配置目录中。
 
 脚本及其内容在以下各节中列出。
+
+### reset_time.pl
+
+reset_time.pl脚本用于执行以下操作:
+
+* 如果FRBG-Reset-Type的值为daily, weekly, or monthly，则将添加FRBG-Start-Time AVP。
+* FRBG启动时间的值是计数器启动时的Unix时间。
+* 如果添加了FRBG-Start-Time AVP，则脚本的返回代码将具有更新的值。
+* 如果FRBG-Start-Time AVP没有添加(FRBG-Reset-Type = never)，则脚本的返回代码将具有noop值。
+
+以下是reset_time.pl的内容:
+
+
+```
+#! /usr/bin/perl -wuse strict;use POSIX;
+# use ...# This is very important !use vars qw(%RAD_CHECK);use constant RLM_MODULE_OK=>        2;# /* the module is OK,continue */use constant RLM_MODULE_NOOP=>      7;use constant RLM_MODULE_UPDATED=>   8;# /* OK (pairs modified) */
+sub authorize {    #Find out when the reset time should be    if($RAD_CHECK{'FRBG-Reset-Type'} =~ /monthly/i){        $RAD_CHECK{'FRBG-Start-Time'} = start_of_month()    }    if($RAD_CHECK{'FRBG-Reset-Type'} =~ /weekly/i){            $RAD_CHECK{'FRBG-Start-Time'} = start_of_week()    }    if($RAD_CHECK{'FRBG-Reset-Type'} =~ /daily/i){        $RAD_CHECK{'FRBG-Start-Time'} = start_of_day()    }    if(exists($RAD_CHECK{'FRBG-Start-Time'})){        return RLM_MODULE_UPDATED;    }else{        return RLM_MODULE_NOOP;    }}
+sub start_of_month {    #Get the current timestamp;    my $reset_on = 1; #you decide when the monthly CAP will reset    my $unixtime;    my ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst)=localtime(time);    if($mday < $reset_on ){        $unixtime = mktime (0, 0, 0, $reset_on, $mon-1, $year, 0, 0);#We use the previous month    }else{        $unixtime = mktime (0, 0, 0, $reset_on, $mon, $year, 0, 0);#We use this month    }    return $unixtime;}sub start_of_week {    #Get the current timestamp;    my ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst)=localtime(time);    #create a new timestamp:    my $unixtime = mktime (0, 0, 0, $mday-$wday, $mon, $year, 0, 0);    return $unixtime;}
+sub start_of_day {    #Get the current timestamp;
+    my ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst)=localtime(time);    #create a new timestamp:    my $unixtime = mktime (0, 0, 0, $mday, $mon, $year, 0, 0);    return $unixtime;}
+```
+
+### check_usage.pl
+
+check_usage.pl脚本用于执行以下操作:
+
+* 添加reply属性以指定用户的可用字节。这包括千兆字（Gigaword）值的计算。
+* 如果添加了reply属性，请将返回代码指定为updated。
+* 如果数据使用率超过分配的部分，则通过将返回代码指定为reject并添加Reply-Message来reject请求。
+
+check_usage.pl脚本用于执行以下操作:
+
+
+```
+#! usr/bin/perl -wuse strict;# use ...# This is very important!use vars qw(%RAD_CHECK %RAD_REPLY);use constant RLM_MODULE_OK=> 2;# /* the module is OK,continue */use constant RLM_MODULE_UPDATED=> 8;# /* OK (pairs modified) */use constant RLM_MODULE_REJECT=> 0;# /* immediately reject the request */use constant RLM_MODULE_NOOP=> 7;my $int_max = 4294967296;
+sub authorize {    #We will reply, depending on the usage    #If FRBG-Total-Bytes is larger than the 32-bit limit we have to set a Gigaword attribute    if(exists($RAD_CHECK{'FRBG-Total-Bytes'}) && exists($RAD_CHECK{'FRBG-Used-Bytes'})){        $RAD_CHECK{'FRBG-Avail-Bytes'} = $RAD_CHECK{'FRBGTotal-Bytes'} - $RAD_CHECK{'FRBG-Used-Bytes'};    }else{        return RLM_MODULE_NOOP;    }
+    if($RAD_CHECK{'FRBG-Avail-Bytes'} <= $RAD_CHECK{'FRBG-Used-Bytes'}){        if($RAD_CHECK{'FRBG-Reset-Type'} ne 'never'){            $RAD_REPLY{'Reply-Message'} = "Maximum $RAD_CHECK{'FRBG-Reset-Type'} usage exceeded";        }else{            $RAD_REPLY{'Reply-Message'} = "Maximum usage exceeded";        }        return RLM_MODULE_REJECT;    }
+    if($RAD_CHECK{'FRBG-Avail-Bytes'} >= $int_max){        #Mikrotik's reply attributes        $RAD_REPLY{'Mikrotik-Total-Limit'} = $RAD_CHECK{'FRBGAvail-Bytes'} % $int_max;        $RAD_REPLY{'Mikrotik-Total-Limit-Gigawords'} = int($RAD_CHECK{'FRBG-Avail-Bytes'} / $int_max );        #Coova Chilli's reply attributes        $RAD_REPLY{'ChilliSpot-Max-Total-Octets'} = $RAD_CHECK{'FRBG-Avail-Bytes'} % $int_max;        $RAD_REPLY{'ChilliSpot-Max-Total-Gigawords'} = int($RAD_CHECK{'FRBG-Avail-Bytes'} / $int_max );    }else{        $RAD_REPLY{'Mikrotik-Total-Limit'} = $RAD_CHECK{'FRBGAvail-Bytes'};        $RAD_REPLY{'ChilliSpot-Max-Total-Octets'} = $RAD_CHECK{'FRBG-Avail-Bytes'};        }    return RLM_MODULE_UPDATED;
+}
+```
+
+由于Isaac使用了Mikrotik和Coova Chilli，我们将它们的AVPs用于限制总数据。请参阅NAS的文档，以确定它是否支持数据限制，以及应使用哪些AVPs进行限制。
+
+### 在CentOS上安装perl模块
+-------
+
+FreeRADIUS perl模块是被单独打包的。请确保已安装此软件包。SUSE和Ubuntu已经在FreeRADIUS的标准安装中包含了perl模块，不过还有一个额外的错误，我们稍后将删除。
+
+### 更新dictionary文件
+-------
+
+FreeRADIUS包括各种供应商的字典文件。我们希望返回的属性是这些供应商以后开发的一部分，不包括在FreeRADIUS标准字典文件中。我们必须通过将它们添加到现有字典文件中来包括它们。供应商的dictionary文件通常位于/usr/share/freeradius目录下。如果使用“配置、制作、安装（configure,make, make install）”模式安装FreeRADIUS，则安装模式将位于/usr/local/share/freeradius下。
+
+查找供应商词典的位置，并将以下属性添加到相应的词典中:
+
+dictionary.chillispot
+
+```
+ATTRIBUTE ChilliSpot-Max-Input-Gigawords 21 integerATTRIBUTE ChilliSpot-Max-Output-Gigawords 22 integerATTRIBUTE ChilliSpot-Max-Total-Gigawords 23 integer
+```
+dictionary.mikrotik
+
+```
+ATTRIBUTE Mikrotik-Total-Limit 17 integerATTRIBUTE Mikrotik-Total-Limit-Gigawords 18 integer
+```
+
+我们刚才所做的更改是对供应商(VSAs)属性的更改，并且可以在RADIUS数据包中通过导线传输。VSAs不同于我们之前添加到主dictionary文件中的属性，这些属性由FreeRADIUS服务器内部使用。
+
+请记住，使用最新版本的Mikrotik和Coova Chilli将确保支持这些属性。还要查看是否需要包括最新版本中引入的其他属性。
+
+### 推荐的词典更新方式
+
+本练习不遵循更新字典文件的建议方法。本书后面有一章专门介绍词典，其中介绍了使词典保持最新的推荐方法。
+
+启动时词典的收录方式也将在词典一章中详细介绍。简而言之，FreeRADIUS配置目录下的主dictionary文件包括名为`/usr/share/freeradius/dictionary`的文件。此文件又包括位于`/usr/share/freeradius/`下的各种`.dictionary`文件。
+
+### 准备users文件
+
+我们将使用users文件作为用户存储。在现实世界中，您可以使用其他来源，例如SQL数据库或LDAP目录。
+
+确保用户文件包含以下Alice条目:
+
+```
+"alice" Cleartext-Password := "passme",FRBG-Total-Bytes :='9126805504',FRBG-Reset-Type := 'monthly'Reply-Message = "Hello, %{User-Name}"
+```
+
+这将限制每月使用8.5 GB数据。
+
+### 准备数据库
+
+虽然我们在用户文件中定义了Alice，但我们将使用SQL进行核算。按照以下步骤准备数据库:
+
+1.确保您具有第5章用户名和密码源中指定的工作SQL配置。
+2.我们将不使用SQL作为用户存储。确认在FreeRADIUS配置目录下sites-enabled/default文件的authorize部分中禁用(注释掉)了SQL。
+3.要使我们的数据计数器成功运行，请确保在FreeRADIUS配置目录下的sites-enabled/default文件的accounting部分中启用(取消注释) SQL。
+4.使用MySQL客户端程序并清理数据库中可能仍然存在的任何以前的会计详细信息:
+
+```
+$>mysql -u root -p radiusdelete from radacct;
+```
+5.在本练习的后面部分，我们将使用radclient程序模拟会计。确保您创建了第6章“会计”中指定的`4088_06_acct_start.txt` 和`4088_06_acct_stop.txt` 文件。
+
+您可能会担心SQL模块也有32位整数限制。幸运的是，在FreeRADIUS的较新版本中，这一切都得到了解决。FreeRADIUS负责在更新SQL数据库之前将千兆位进位AVP与八位AVP相结合。MySQL的SQL模式还使用bigint(20)存储八位字节值，这足以存储大量数据。
+
+### 向虚拟服务器添加unlang代码
+
+到目前为止，所有准备工作都已完成，我们向虚拟服务器定义添加一段unlang代码。在FreeRADIUS配置目录下sites-enabled/default文件的authorize（授权）部分的daily条目下方添加以下代码。
+
+```
+if((control:FRBG-Total-Bytes)&&(control:FRBG-Reset-Type)){    reset_time    if(updated){    # Reset Time was updated,                    # we can now use it in a query        update control {        #Get the total usage up to now:        FRBG-Used-Bytes := "%{sql:SELECT IFNULL(SUM(acctinputoctets - GREATEST((%{control:FRBG-Start-Time} - UNIX_TIMESTAMP(acctstarttime)), 0))+SUM(acctoutputoctets -GREATEST((%{control:FRBG-Start-Time} - UNIX_TIMESTAMP(acctstarttime)), 0)),0) FROM radacct WHERE username='%{request:User-Name}' AND UNIX_TIMESTAMP(acctstarttime) + acctsessiontime > '%{control:FRBG-Start-Time}'}"            }        }        else{            #Asumes reset type = never            #Get the total usage of the user            update control {                FRBG-Used-Bytes := "%{sql:SELECT IFNULL(SUM(acctinputoctets)+SUM(acctoutputoctets),0) FROM radacct WHERE username='%{request:User-Name}'}"            }        }        #Now we know how much they are allowed to use and the usage.        check_usage}
+```
+
+数据计数器现在完成。
+
+### 测试数据计数器
+
+检验真理的时刻到了。现在是测试数据计数器的时候了。如果您使用SUSE或Ubuntu，请记LD_PRELOAD。CentOS没有这个问题。
+
+1.在调试模式下重新启动FreeRADIUS；如果需要，设置LD_PRELOAD环境变量。我们假设Ubuntu在这里。请更改以适合您的分发:
+
+`#>LD_PRELOAD=/usr/lib/libperl.so /usr/sbin/freeradius -X`
+
+2.尝试使用radtest命令验证为alice:
+
+`$>radtest alice passme 127.0.0.1 100 testing123`
+
+3.您应该在FreeRADIUS的答复中获得以下AVPs:
+
+```
+ChilliSpot-Max-Total-Gigawords = 2ChilliSpot-Max-Total-Octets = 536870912Mikrotik-Total-Limit-Gigawords = 2Mikrotik-Total-Limit = 536870912Reply-Message = "Hello, alice"
+```
+
+4.将radtest与4088_06_acct_start.txt和4088_06_acct_stop.txt文件结合使用，模拟一些会计核算:
+
+```
+$>radclient 127.0.0.1 auto testing123 -f 4088_06_acct_start.txt$>radclient 127.0.0.1 auto testing123 -f 4088_06_acct_stop.txt
+```
+
+5.尝试使用radtest命令再次验证为Alice。您现在应该在回复中获取不同的值，以显示剩余数据是如何耗尽的:
+
+```
+ChilliSpot-Max-Total-Gigawords = 2ChilliSpot-Max-Total-Octets = 536866638Mikrotik-Total-Limit-Gigawords = 2Mikrotik-Total-Limit = 536866638
+```
+
+重复几次记帐模拟和身份验证测试周期。注意可用字节如何随着每个周期而减少。
+
+### 清理
+
+要以正确的方式完成本练习，您可以执行以下挑战:
+
+* 在policy.conf文件中定义策略。内容将是我们添加到default文件中的unlang代码。用新创建策略替换代码。
+* 将LD_PRELOAD环境变量添加到SUSE和Ubuntu上的FreeRADIUS启动脚本中。
+
+## 摘要
+
+授权可以成为FreeRADIUS中最复杂的部分。通过充分利用unlang提供的服务，我们可以克服几乎所有可以想象的问题。
+
+在本章中，我们介绍了:
+
+* 限制的应用:可以在RADIUS服务器或NAS设备上应用限制。
+* Unlang : Unlang是一种强大的处理语言，它允许我们操纵FreeRADIUS处理传入请求的方式。它具有可以控制请求流的条件检查。它还允许与某些模块(如SQL模块)交互，以从SQL数据库中获取结果。unlang使我们能够操作和添加将随访问接受数据包返回的AVPs。任何想要在FreeRADIUS中创建灵活多样的配置的人都应该掌握Unlang的使用。
+
+随着本章关于授权的结束，我们现在已经完成了AAA框架的覆盖。本书的其余部分将集中讨论更高级的RADIUS主题，以及特定于自由RADIUS的主题。
+
 
