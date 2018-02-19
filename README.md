@@ -139,4 +139,41 @@
 * [检查属性是否存在](https://github.com/ZhangYizhe/FreeRADIUS-Beginner-s-Guide/blob/master/content/Authorization.md#检查属性是否存在)
 * [使用逻辑表达式对用户进行身份验证](https://github.com/ZhangYizhe/FreeRADIUS-Beginner-s-Guide/blob/master/content/Authorization.md#使用逻辑表达式对用户进行身份验证)
 
+#### [属性和变量（Attributes and variables）](https://github.com/ZhangYizhe/FreeRADIUS-Beginner-s-Guide/blob/master/content/Authorization.md#属性和变量attributes-and-variables)
+* [属性列表](https://github.com/ZhangYizhe/FreeRADIUS-Beginner-s-Guide/blob/master/content/Authorization.md#属性列表)
+
+##### 引用属性
+* [if语句中的属性](https://github.com/ZhangYizhe/FreeRADIUS-Beginner-s-Guide/blob/master/content/Authorization.md#if语句中的属性)
+* [引用条件中的属性](https://github.com/ZhangYizhe/FreeRADIUS-Beginner-s-Guide/blob/master/content/Authorization.md#引用条件中的属性)
+* [比较运算符(op)](https://github.com/ZhangYizhe/FreeRADIUS-Beginner-s-Guide/blob/master/content/Authorization.md#比较运算符)
+* [属性操作](https://github.com/ZhangYizhe/FreeRADIUS-Beginner-s-Guide/blob/master/content/Authorization.md#属性操作)
+
+##### 变量
+* [作为变量的SQL语句](https://github.com/ZhangYizhe/FreeRADIUS-Beginner-s-Guide/blob/master/content/Authorization.md#作为变量的sql语句)
+* [设置变量的默认值](https://github.com/ZhangYizhe/FreeRADIUS-Beginner-s-Guide/blob/master/content/Authorization.md#设置变量的默认值)
+* [使用命令替换](https://github.com/ZhangYizhe/FreeRADIUS-Beginner-s-Guide/blob/master/content/Authorization.md#使用命令替换)
+* [使用正则表达式](https://github.com/ZhangYizhe/FreeRADIUS-Beginner-s-Guide/blob/master/content/Authorization.md#使用正则表达式)
+
+#### 实用unlang
+> 在前一章第6章“会计”中，我们介绍了sql_counter模块。此模块用于限制用户每天、每周或每月在网络上花费的时间，但是sql_counter在限制用户的数据使用方面存在问题。
+
+* [限制数据使用](https://github.com/ZhangYizhe/FreeRADIUS-Beginner-s-Guide/blob/master/content/Authorization.md#限制数据使用)
+* [使用unlang来创建数据计数器](https://github.com/ZhangYizhe/FreeRADIUS-Beginner-s-Guide/blob/master/content/Authorization.md#使用unlang来创建数据计数器)
+* [定义自定义属性](https://github.com/ZhangYizhe/FreeRADIUS-Beginner-s-Guide/blob/master/content/Authorization.md#定义自定义属性)
+* [32位限制](https://github.com/ZhangYizhe/FreeRADIUS-Beginner-s-Guide/blob/master/content/Authorization.md#32位限制)
+* [使用 perl module](https://github.com/ZhangYizhe/FreeRADIUS-Beginner-s-Guide/blob/master/content/Authorization.md#使用-perl-module)
+* [reset_time.pl](https://github.com/ZhangYizhe/FreeRADIUS-Beginner-s-Guide/blob/master/content/Authorization.md#reset_timepl)
+* [check_usage.pl](https://github.com/ZhangYizhe/FreeRADIUS-Beginner-s-Guide/blob/master/content/Authorization.md#check_usagepl)
+* [在CentOS上安装perl模块](https://github.com/ZhangYizhe/FreeRADIUS-Beginner-s-Guide/blob/master/content/Authorization.md#在centos上安装perl模块)
+* [更新dictionary文件](https://github.com/ZhangYizhe/FreeRADIUS-Beginner-s-Guide/blob/master/content/Authorization.md#更新dictionary文件)
+* [推荐的dictionary更新方式](https://github.com/ZhangYizhe/FreeRADIUS-Beginner-s-Guide/blob/master/content/Authorization.md#推荐的词典更新方式)
+* [准备users文件](https://github.com/ZhangYizhe/FreeRADIUS-Beginner-s-Guide/blob/master/content/Authorization.md#准备users文件)
+* [准备数据库](https://github.com/ZhangYizhe/FreeRADIUS-Beginner-s-Guide/blob/master/content/Authorization.md#准备数据库)
+* [向虚拟服务器添加unlang代码](https://github.com/ZhangYizhe/FreeRADIUS-Beginner-s-Guide/blob/master/content/Authorization.md#向虚拟服务器添加unlang代码)
+* [测试数据计数器](https://github.com/ZhangYizhe/FreeRADIUS-Beginner-s-Guide/blob/master/content/Authorization.md#测试数据计数器)
+* [清理](https://github.com/ZhangYizhe/FreeRADIUS-Beginner-s-Guide/blob/master/content/Authorization.md#清理)
+
+#### [摘要](https://github.com/ZhangYizhe/FreeRADIUS-Beginner-s-Guide/blob/master/content/Authorization.md#摘要)
+
+
 
