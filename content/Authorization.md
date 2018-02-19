@@ -332,7 +332,7 @@ sql_set_user escaped user --> 'alice'    expand: SELECT curtime(); -> SELECT cu
 1.编辑FreeRADIUS配置目录下的sites-available/default虚拟服务器，并在post-auth部分的顶部添加以下代码:
 
 ```
-if(control:Auth-Type == 'PAP'){    update reply {        Reply-Message := "Framed protocol is: %{%{request:Framed-Protocol}:-Not in request}"    }}
+if(control:Auth-Type == 'PAP'){    update reply {        Reply-Message := "Framed protocol is: %{ %{request:Framed-Protocol}:-Not in request}"    }}
 ```
 
 2.在调试模式下重新启动FreeRADIUS，并尝试验证作为alice.。首先在radtest命令的末尾添加1，然后省略1。
@@ -352,12 +352,12 @@ if(control:Auth-Type == 'PAP'){    update reply {        Reply-Message := "Fra
 变量引用中的`:-`字符序列是一种指示，用于在第一个变量不存在时取消标记，它应尝试使用下面的`:-`字符序列。注意以下要点:
 
 * 如果`:-`后跟未加引号的字符串，则返回此字符串。
-* 如果`:-`后面是对另一个变量的引用，则可以创建一个链来最终测试多个变量的存在，例如:`%{%{request:Framed-Protocol}:-%{request: NAS-Name}:- Default value}`
+* 如果`:-`后面是对另一个变量的引用，则可以创建一个链来最终测试多个变量的存在，例如:`%{ %{request:Framed-Protocol}:-%{request: NAS-Name}:- Default value}`
 * 此语法称为条件语法和FreeRADIUS版本之间的更改。某些模块仍然使用旧语法，这会导致调试消息中出现警告。LDAP模块就是一个例子。您可以从更改LDAP模块配置文件中的以下行:
 
 
 ```
-filter = "(uid=%{Stripped-User-Name:-%{User-Name}})"to:filter = "(uid=%{%{Stripped-User-Name}:-%{User-Name}})"
+filter = "(uid=%{Stripped-User-Name:-%{User-Name}})"to:filter = "(uid=%{ %{Stripped-User-Name}:-%{User-Name}})"
 ```
 
 ### 使用命令替换
