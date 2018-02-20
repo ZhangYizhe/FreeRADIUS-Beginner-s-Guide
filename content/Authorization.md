@@ -604,14 +604,20 @@ ATTRIBUTE Mikrotik-Total-Limit 17 integerATTRIBUTE Mikrotik-Total-Limit-Gigawor
 虽然我们在用户文件中定义了Alice，但我们将使用SQL进行核算。按照以下步骤准备数据库:
 
 1.确保您具有第5章用户名和密码源中指定的工作SQL配置。
+
 2.我们将不使用SQL作为用户存储。确认在FreeRADIUS配置目录下sites-enabled/default文件的authorize部分中禁用(注释掉)了SQL。
+
 3.要使我们的数据计数器成功运行，请确保在FreeRADIUS配置目录下的sites-enabled/default文件的accounting部分中启用(取消注释) SQL。
+
 4.使用MySQL客户端程序并清理数据库中可能仍然存在的任何以前的会计详细信息:
 
 ```
 $>mysql -u root -p radiusdelete from radacct;
 ```
-5.在本练习的后面部分，我们将使用radclient程序模拟会计。确保您创建了第6章“会计”中指定的`4088_06_acct_start.txt` 和`4088_06_acct_stop.txt` 文件。
+
+5.在本练习的后面部分，我们将使用radclient程序模拟会计。确保您创建了第6章“会计”中指定的
+
+`4088_06_acct_start.txt` 和`4088_06_acct_stop.txt` 文件。
 
 您可能会担心SQL模块也有32位整数限制。幸运的是，在FreeRADIUS的较新版本中，这一切都得到了解决。FreeRADIUS负责在更新SQL数据库之前将千兆位进位AVP与八位AVP相结合。MySQL的SQL模式还使用bigint(20)存储八位字节值，这足以存储大量数据。
 
