@@ -1,6 +1,6 @@
 ## 欢迎来到《FreeRADIUS初学者的指南》
 
-这是一个 **个人项目**，旨在完成对《FreeRADIUS-Beginner-s-Guide》这本书籍的翻译工作，如果你在浏览过程中有什么建议或意见，欢迎提交！ —— 张艺哲
+这是一个 **个人项目**，旨在完成对《FreeRADIUS Beginner's Guide》这本书籍的翻译工作，如果你在浏览过程中有什么建议或意见，欢迎提交！ —— 张艺哲
 
 
 -------
@@ -174,6 +174,3 @@
 * [清理](https://github.com/ZhangYizhe/FreeRADIUS-Beginner-s-Guide/blob/master/content/Authorization.md#清理)
 
 #### [摘要](https://github.com/ZhangYizhe/FreeRADIUS-Beginner-s-Guide/blob/master/content/Authorization.md#摘要)
-
-
-
